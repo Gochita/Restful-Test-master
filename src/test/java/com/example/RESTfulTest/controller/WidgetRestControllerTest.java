@@ -38,8 +38,8 @@ class WidgetRestControllerTest {
     @DisplayName("GET /widgets success")
     void testGetWidgetsSuccess() throws Exception {
         // Setup our mocked service
-        Widget widget1 = new Widget(1l, "Widget Name", "Description", 1);
-        Widget widget2 = new Widget(2l, "Widget 2 Name", "Description 2", 4);
+        Widget widget1 = new Widget(1L, "Widget Name", "Description", 1);
+        Widget widget2 = new Widget(2L, "Widget 2 Name", "Description 2", 4);
         doReturn(Lists.newArrayList(widget1, widget2)).when(service).findAll();
 
         // Execute the GET request
@@ -64,7 +64,6 @@ class WidgetRestControllerTest {
     }
 
 
-
     @Test
     @DisplayName("GET /rest/widget/1 - Not Found")
     void testGetWidgetByIdNotFound() throws Exception {
@@ -76,13 +75,27 @@ class WidgetRestControllerTest {
                 // Validate the response code
                 .andExpect(status().isNotFound());
     }
-//Test put para cuando se hace un bad request
+
+    //Test put para cuando se hace un bad request
     @Test
     @DisplayName("PUT /rest/widget/1  - Bad request")
-    void testModifyElementNotFound() throws Exception{
+    void testModifyElementBadRequest() throws Exception {
         doReturn(Optional.empty()).when(service).findById(1L);
-        mockMvc.perform(put("/rest/widget/{id}",1L))
+        mockMvc.perform(put("/rest/widget/{id}", 1L))
                 .andExpect(status().isBadRequest());
+    }
+
+    //Test put para cuando se hace not found
+    @Test
+    @DisplayName("PUT /rest/widget/1  - Not found")
+    void testModifyElementNotFound() throws Exception {
+        Optional<Widget> widgetsito = Optional.of(new Widget(1L, "tester", "tester", 3));
+        doReturn(Optional.empty()).when(service).findById(1L);
+        mockMvc.perform(put("/rest/widget/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(asJsonString(widgetsito))
+                        .header(HttpHeaders.IF_MATCH,"1L"))
+                .andExpect(status().isNotFound());
     }
 /*
     @Test
@@ -107,8 +120,8 @@ class WidgetRestControllerTest {
 
         // Execute the POST request
         mockMvc.perform(post("/rest/widget")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(widgetToPost)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(widgetToPost)))
 
                 // Validate the response code and content type
                 .andExpect(status().isCreated())
