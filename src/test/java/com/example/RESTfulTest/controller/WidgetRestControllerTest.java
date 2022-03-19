@@ -94,21 +94,29 @@ class WidgetRestControllerTest {
         mockMvc.perform(put("/rest/widget/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(asJsonString(widgetsito))
-                        .header(HttpHeaders.IF_MATCH,"1L"))
+                        .header(HttpHeaders.IF_MATCH, "1L"))
                 .andExpect(status().isNotFound());
     }
-/*
+
     @Test
     @DisplayName("PUT /rest/widget/1")
-    void testModifyElement() throws Exception{
-        Widget widget1 = new Widget(1L, "Tester", "Description tester", 1);
-        mockMvc.perform(put("/rest/widget/{id}",1L))
+    void testModifyElement() throws Exception {
+
+        //Mocked widget
+        Optional<Widget> mock = Optional.of(new Widget(1L, "mock", "mock" , 1 ));
+        Widget widget = new Widget(3L, "tester", "tester", 3);
+        doReturn(mock).when(service).findById(1L);
+        doReturn(widget).when(service).save(any());
+
+        mockMvc.perform(put("/rest/widget/{id}",1L)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(asJsonString(widget))
+                        .header(HttpHeaders.IF_MATCH, "1"))
                 .andExpect(status().isOk());
 
 
     }
 
- */
 
     @Test
     @DisplayName("POST /rest/widget")
