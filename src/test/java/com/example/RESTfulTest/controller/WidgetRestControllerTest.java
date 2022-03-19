@@ -62,7 +62,20 @@ class WidgetRestControllerTest {
                 .andExpect(jsonPath("$[1].description", is("Description 2")))
                 .andExpect(jsonPath("$[1].version", is(4)));
     }
+    @Test
+    @DisplayName("GET /rest/widget/1 ")
+    void testGetWidgetById() throws Exception {
+        // Setup our mocked service
+        Optional<Widget> widget1 = Optional.of(new Widget(1L, "Widget Name", "Description", 1));
+        doReturn(widget1).when(service).findById(1L);
+        // Execute the GET request
+        mockMvc.perform(get("/rest/widget/{id}", 1L))
+                .andExpect(status().isOk());
 
+
+
+
+    }
 
     @Test
     @DisplayName("GET /rest/widget/1 - Not Found")
@@ -104,7 +117,7 @@ class WidgetRestControllerTest {
 
         //Mocked widget
         Optional<Widget> mock = Optional.of(new Widget(1L, "mock", "mock" , 1 ));
-        Widget widget = new Widget(3L, "tester", "tester", 3);
+        Widget widget = new Widget(1L, "tester", "tester", 3);
         doReturn(mock).when(service).findById(1L);
         doReturn(widget).when(service).save(any());
 
